@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barneys Clicker Game</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://t3.ftcdn.net/jpg/03/19/66/48/360_F_319664852_yZ5jqpOoxig8RR3CgA2mn63T5wQLgkHU.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        #container {
+            text-align: left;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        #scoreContainer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #score {
+            animation: scaleUpDown 1s infinite;
+        }
+
+        #clickerButton {
+            font-size: 18px;
+            padding: 20px;
+            cursor: pointer;
+            background: url('https://static.vecteezy.com/system/resources/previews/012/598/212/non_2x/currency-coin-cartoon-png.png') no-repeat center center;
+            background-size: cover;
+            border: none;
+            border-radius: 50%;
+            margin-right: 20px;
+            margin-left: 125px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            animation: bounceIn 1s ease-out;
+        }
+
+        #clickerButton:hover {
+            background-color: #ffd700; /* darker gold on hover */
+            transform: scale(1.1);
+        }
+
+        #upgrades {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(52, 73, 94, 0.8);
+            color: white;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: slideInRight 1s ease-out;
+        }
+
+        .upgradeItem {
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .upgradeItem button {
+            width: 120px;
+            padding: 10px;
+            background-color: #2ecc71; /* green color for buy buttons */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .upgradeItem button:hover {
+            background-color: #27ae60; /* darker green on hover */
+            transform: scale(1.05);
+        }
+
+        #resetButton {
+            width: 120px;
+            padding: 10px;
+            background-color: #e74c3c; /* red color for reset button */
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #resetButton:hover {
+            background-color: #c0392b; /* darker red on hover */
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes scaleUpDown {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Barneys Clicker Game</h1>
+        <div id="scoreContainer">
+            <span>Gold Mined:</span>
+            <span id="score">0</span>
+        </div>
+        <button id="clickerButton" onclick="clickToAdd()"></button>
+    </div>
+
+    <div id="upgrades">
+        <div class="upgradeItem">
+            <span></span>
+            <button class="upgradeButton" onclick="buyUpgrade(100, 2)">2x - $100</button>
+        </div>
+        <div class="upgradeItem">
+            <span></span>
+            <button class="upgradeButton" onclick="buyUpgrade(1000, 5)">5x - $1000</button>
+        </div>
+        <div class="upgradeItem">
+            <span></span>
+            <button class="upgradeButton" onclick="buyUpgrade(15000, 10)">10x - $15000</button>
+        </div>
+        <button id="resetButton" onclick="resetGame()">Reset Game</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let clickValue = 1;
+        let autoUpgradeValue = 0;
+
+        const updateDisplay = () => {
+            const scoreElement = document.getElementById('score');
+            scoreElement.innerText = score.toFixed(0);
+        };
+
+        const clickToAdd = () => {
+            score += clickValue;
+            updateDisplay();
+        };
+
+        const buyUpgrade = (cost, value) => {
+            if (score >= cost) {
+                score -= cost;
+                clickValue += value;
+                updateDisplay();
+                showMessage('Successfully purchased upgrade');
+            } else {
+                alert('Not enough score to buy this upgrade!');
+            }
+        };
+
+        const buyAutoUpgrade = (cost, value) => {
+            if (score >= cost) {
+                score -= cost;
+                autoUpgradeValue += value;
+                updateDisplay();
+                setInterval(() => {
+                    score += autoUpgradeValue;
+                    updateDisplay();
+                }, 1000);
+                showMessage('Successfully purchased auto upgrade');
+            } else {
+                alert('Not enough score to buy this upgrade!');
+            }
+        };
+
+        const resetGame = () => {
+            score = 0;
+            clickValue = 1;
+            autoUpgradeValue = 0;
+            updateDisplay();
+            showMessage('Game reset successfully');
+        };
+
+        const showMessage = (message) => {
+            alert(message);
+        };
+    </script>
+</body>
+</html>
